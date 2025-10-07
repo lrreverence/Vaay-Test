@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma'
 // DELETE /api/videos/[id] - Delete video
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -18,8 +18,10 @@ export async function DELETE(
       )
     }
 
+    const { id } = await params
+
     const video = await prisma.video.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: { userId: true }
     })
 
@@ -39,7 +41,7 @@ export async function DELETE(
     }
 
     await prisma.video.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Video deleted successfully' })

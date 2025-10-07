@@ -167,32 +167,12 @@ export default function Dashboard() {
                     <div className="mt-2 text-sm text-yellow-700">
                       <p>You need an active subscription to access premium features.</p>
                     </div>
-                    <div className="mt-4 space-x-4">
+                    <div className="mt-4">
                       <button
                         onClick={handleSubscribe}
                         className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
                       >
                         Subscribe Now - $9.99/month
-                      </button>
-                      <button
-                        onClick={async () => {
-                          try {
-                            await fetch('/api/stripe/mock-webhook', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                userId: session?.user?.id,
-                                subscriptionId: 'sub_test_' + Date.now()
-                              })
-                            })
-                            fetchUserData()
-                          } catch (err) {
-                            console.error('Error:', err)
-                          }
-                        }}
-                        className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700"
-                      >
-                        🧪 Manual Activate (Testing)
                       </button>
                     </div>
                   </div>
