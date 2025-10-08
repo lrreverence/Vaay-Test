@@ -209,24 +209,100 @@ Then update your Stripe webhook URL to: https://your-ngrok-url.ngrok.io/api/stri
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
+### Quick Deploy to Render (Recommended for SQLite)
 
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Add environment variables in Vercel dashboard
+1. **Push to GitHub** (already done ✅)
+2. **Connect to Render** - [render.com](https://render.com)
+3. **Add Environment Variables** in Render dashboard
+4. **Deploy!** - Automatic deployment
+
+### SQLite Compatible Deployment
+
+**Great news**: Render supports SQLite with persistent storage!
+
+### Render Deployment (No Database Changes Needed)
+
+**Environment Variables for Render:**
+```env
+DATABASE_URL="file:./dev.db"
+NEXTAUTH_URL="https://your-app.onrender.com"
+NEXTAUTH_SECRET="your-production-secret"
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_your_key"
+STRIPE_SECRET_KEY="sk_test_your_key"
+STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
+ADMIN_EMAIL="admin@example.com"
+```
+
+**Deploy Steps:**
+1. Go to [render.com](https://render.com)
+2. Connect GitHub repository
+3. Add environment variables
 4. Deploy!
+5. Update Stripe webhook URL
 
-### Environment Variables for Production
+**📋 See [RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md) for detailed guide**
 
-Make sure to set all environment variables in your deployment platform:
+### Alternative: Database Migration (Vercel/Netlify)
 
-- DATABASE_URL (use a production database)
-- NEXTAUTH_URL (your production domain)
-- NEXTAUTH_SECRET
-- NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-- STRIPE_SECRET_KEY
-- STRIPE_WEBHOOK_SECRET
-- ADMIN_EMAIL
+**Option 1: PlanetScale (Free)**
+```bash
+# Install PlanetScale CLI
+npm install -g @planetscale/cli
+pscale database create saas-demo
+```
+
+**Option 2: Supabase (Free)**
+- Create project at [supabase.com](https://supabase.com)
+- Get connection string from Settings → Database
+
+**Option 3: Railway (Free tier)**
+```bash
+npm install -g @railway/cli
+railway add postgresql
+```
+
+### Production Environment Variables
+
+```env
+# Database (Required - Cloud database)
+DATABASE_URL="postgresql://username:password@host:port/database"
+
+# NextAuth (Production)
+NEXTAUTH_URL="https://your-app.vercel.app"
+NEXTAUTH_SECRET="your-production-secret"
+
+# Stripe (Production - Optional for demo)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_your_live_key"
+STRIPE_SECRET_KEY="sk_live_your_live_key"
+STRIPE_WEBHOOK_SECRET="whsec_your_webhook_secret"
+
+# App Configuration
+ADMIN_EMAIL="admin@yourdomain.com"
+```
+
+### Update Prisma Schema for Production
+
+Change `prisma/schema.prisma`:
+```prisma
+datasource db {
+  provider = "postgresql"  // Change from "sqlite"
+  url      = env("DATABASE_URL")
+}
+```
+
+### Deploy Database Schema
+```bash
+npx prisma generate
+npx prisma db push
+npm run seed
+```
+
+### Update Stripe Webhook
+1. Go to Stripe Dashboard → Webhooks
+2. Update endpoint: `https://your-app.vercel.app/api/stripe/webhook`
+3. Test webhook delivery
+
+**📋 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment guide**
 
 ## 🧪 Testing Checklist
 
